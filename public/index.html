@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+    <title>MGame</title>
+</head>
+<!------ Include the above in your HEAD tag ---------->
+<style>
+    .auto {
+        display: none;
+    }
+    .login-container{
+        margin-top: 5%;
+        margin-bottom: 5%;
+    }
+    .login-form-1{
+        padding: 5%;
+        box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 9px 26px 0 rgba(0, 0, 0, 0.19);
+    }
+    .login-form-1 h3{
+        text-align: center;
+        color: #333;
+    }
+    .login-form-2{
+        padding: 5%;
+        background: #0062cc;
+        box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 9px 26px 0 rgba(0, 0, 0, 0.19);
+    }
+    .login-form-2 h3{
+        text-align: center;
+        color: #fff;
+    }
+    .login-container form{
+        padding: 10%;
+    }
+    .btnSubmit
+    {
+        width: 50%;
+        border-radius: 1rem;
+        padding: 1.5%;
+        border: none;
+        cursor: pointer;
+    }
+    .login-form-1 .btnSubmit{
+        font-weight: 600;
+        color: #fff;
+        background-color: #0062cc;
+    }
+    .login-form-2 .btnSubmit{
+        font-weight: 600;
+        color: #0062cc;
+        background-color: #fff;
+    }
+    .login-form-2 .ForgetPwd{
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    .login-form-1 .ForgetPwd{
+        color: #0062cc;
+        font-weight: 600;
+        text-decoration: none;
+    }
+</style>
+<div class="container login-container">
+    <div class="row">
+        <div class="col-md-6 login-form-1">
+            <h3>Login</h3>
+            <form id="login">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Your Username *" value="" id="loginUsername"/>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" placeholder="Your Password *" value="" id="loginPassword"/>
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btnSubmit" value="Login" id="loginSubmit"/>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6 login-form-2">
+            <h3>Register</h3>
+            <form id="register">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Your Username *" value="" id="registerUsername"/>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" placeholder="Your Password *" value="" id="registerPassword"/>
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btnSubmit" value="Register"/>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="auto row" id="secondRow">
+        <div class="auto col-md-6 login-form-1" id="loginResponse">
+            <h3>Post Login Response</h3>
+            <div class="well" id="loginTextUsername"></div>
+            <div class="well" id='loginTextPassword'></div>
+        </div>
+        <div class="auto col-md-6 login-form-2" id="registerResponse">
+            <h3>Post Register Response</h3>
+            <div class="well" id="registerTextUsername"></div>
+            <div class="well" id='registerTextPassword'></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('#login').on('submit', function(e){
+            var myObj = {
+                username: $("#loginUsername").val(),
+                password: $("#loginPassword").val()
+            };
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/dsaApp/mock/login',
+                data: JSON.stringify(myObj),
+                success: function(data) {
+                    var username = data.username;
+                    var password = data.password;
+                    document.getElementById('loginTextUsername').innerHTML = "Username: "+ username.toString();
+                    document.getElementById('loginTextPassword').innerHTML = "Password: "+ password.toString();
+                    var container = document.getElementById('secondRow');
+                    var loginContainer = document.getElementById('loginResponse');
+                    container.style.display="block";
+                    loginContainer.style.display="block";
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    if(xhr.status===500){
+                        alert("Password not match");
+                    }
+                    else{
+                        alert("User not found");
+                    }
+                },
+                contentType: "application/json",
+                dataType: 'json'
+            });
+        });
+        $('#register').on('submit', function(e){
+            var myObj = {
+                username: $("#registerUsername").val(),
+                password: $("#registerPassword").val()
+            };
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/dsaApp/mock/register',
+                data: JSON.stringify(myObj),
+                success: function(data) {
+                    var username = data.username;
+                    var password = data.password;
+                    document.getElementById('registerTextUsername').innerHTML = "Username: "+ username.toString();
+                    document.getElementById('registerTextPassword').innerHTML = "Password: "+ password.toString();
+                    var container = document.getElementById('secondRow');
+                    var registerContainer = document.getElementById('registerResponse');
+                    container.style.display="block";
+                    registerContainer.style.display="block";
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert("Existant user");
+                },
+                contentType: "application/json",
+                dataType: 'json'
+            });
+        });
+    });
+</script>
